@@ -30,6 +30,7 @@ namespace Grades
             grades.Add(grade);
         }
        private List<float> grades;
+        public string Name;
        
     }
 }
