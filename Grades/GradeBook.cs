@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace Grades
 {
-    public class GradeBook
+    public class GradeBook : GradeTracker
     {
         public GradeBook()
         {
             _name = "empty";
             grades = new List<float>();
         }
-        public GradeStatistics ComputeStatistics()
+        public override GradeStatistics ComputeStatistics()
         {
             GradeStatistics stats = new GradeStatistics();
             float sum = 0;
@@ -28,7 +29,7 @@ namespace Grades
             return stats;
         }
 
-        public void WriteGrades(TextWriter destination)
+        public override void WriteGrades(TextWriter destination)
         {
             for (int i = 0; i < grades.Count; i++)
             {
@@ -36,36 +37,15 @@ namespace Grades
             }
         }
 
-        public void AddGrade(float grade)
+        public override void AddGrade(float grade)
         {
             grades.Add(grade);
         }
-        private List<float> grades;
-        private string _name;
-        public string Name
+        public override IEnumerator GetEnumerator()
         {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentException("Name cannot be null or empty");
-                }
-                if (_name != value && NameChanged!=null)
-                {
-                    NameChangedEventArgs args = new NameChangedEventArgs();
-                    args.ExistingName = _name;
-                    args.NewName = value;
-                    NameChanged(this, args);
-                }
-                _name = value;
-
-            }
+            return grades.GetEnumerator();
         }
-        public event NameChhangedDelegate NameChanged;
-
+        protected List<float> grades;
+      
     }
 }
