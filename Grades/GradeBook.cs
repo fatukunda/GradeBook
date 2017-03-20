@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Grades
 {
-   public class GradeBook
+    public class GradeBook
     {
         public GradeBook()
         {
@@ -26,11 +27,20 @@ namespace Grades
             stats.AverageGrade = sum / grades.Count;
             return stats;
         }
+
+        public void WriteGrades(TextWriter destination)
+        {
+            for (int i = 0; i < grades.Count; i++)
+            {
+                destination.WriteLine(grades[i]);
+            }
+        }
+
         public void AddGrade(float grade)
         {
             grades.Add(grade);
         }
-       private List<float> grades;
+        private List<float> grades;
         private string _name;
         public string Name
         {
@@ -40,20 +50,22 @@ namespace Grades
             }
             set
             {
-                if(!String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
-                    if (_name!=value)
-                    {
-                        NameChangedEventArgs args = new NameChangedEventArgs();
-                        args.ExistingName = _name;
-                        args.NewName = value;
-                        NameChanged(this,args);
-                    }
-                    _name = value;
+                    throw new ArgumentException("Name cannot be null or empty");
                 }
+                if (_name != value && NameChanged!=null)
+                {
+                    NameChangedEventArgs args = new NameChangedEventArgs();
+                    args.ExistingName = _name;
+                    args.NewName = value;
+                    NameChanged(this, args);
+                }
+                _name = value;
+
             }
         }
         public event NameChhangedDelegate NameChanged;
-       
+
     }
 }
